@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Editor</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+        }
+        .container {
+            display: flex;
+            max-width: 1000px;
+            margin: 7rem auto;
+        }
+        .container > div {
+            flex: 0 0 50%;
+            padding: 0 15px;
+            box-sizing: border-box;
+        }
+        .container > div:first-child {
+            border-right: 1px solid #ccc;
+        }
+        .container > div > h1{
+            text-align: center;
+        }
+        .container > div:first-child div {
+            margin-bottom: 1rem;
+        }
+        .container > div:first-child select,
+        .container > div:first-child input {
+            display: block;
+            width: 100%;
+            height: calc(1.5em + .75rem + 2px);
+            padding: .375rem .75rem;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #495057;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #ced4da;
+            border-radius: .25rem;
+            box-sizing: border-box;
+        }
+        .container > div:first-child label {
+            display: inline-block;
+            margin-bottom: .5rem;
+        }
+        .container > div:first-child button {
+            color: #fff;
+            background-color: #28a745;
+            border-color: #28a745;
+            border: 1px solid transparent;
+            padding: .375rem .75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: .25rem;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div>
+            <h1>WYSIWYG редактор</h1>
+            <div>
+                <label>Выберите тег</label>
+                <select id="el_tag" onchange="selectTag(event)">
+                    <option disabled selected value>Выберите один из вариантов</option>
+                    <option>a</option>
+                    <option>strong</option>
+                    <option>h1</option>
+                </select>
+            </div>
+            <div>
+                <div id="el_text" class="setting hidden">
+                    <label>Text</label>
+                    <input type="text">
+                </div>
+                <div id="el_link" class="setting hidden">
+                    <label>Link</label>
+                    <input type="text">
+                </div>
+                <div id="el_id" class="setting hidden">
+                    <label>Id</label>
+                    <input type="text">
+                </div>
+                <div id="el_style" class="setting hidden">
+                    <label>Style</label>
+                    <input type="text">
+                </div>
+                <div id="el_class" class="setting hidden">
+                    <label>Class</label>
+                    <input type="text">
+                </div>
+            </div>
+            <button onclick="addDomNode()">Render</button>
+        </div>
+        <div id="final">
+            <h1>Results</h1>
+
+        </div>
+    </div>
+    <script>
+        function selectTag (event)
+        {
+            let value = event.target.value;
+            showSettings(value);
+        }
+        function addDomNode ()
+        {
+            let tag_name = el_tag.value;
+
+            if (tag_name.length == 0)
+            {
+                alert('Выберите тег');
+                return;
+            }
+            if (el_text.getElementsByTagName('input')[0].value.length == 0)
+            {
+                alert('Заполните обязательное поле "Text"');
+                return;
+            }
+            let el = document.createElement(tag_name);
+            if (tag_name == 'a')
+            {
+                el.text = el_text.getElementsByTagName('input')[0].value;
+                el.href = el_link.getElementsByTagName('input')[0].value;
+                el.classList = el_class.getElementsByTagName('input')[0].value;
+            }
+            if (tag_name == 'strong')
+            {
+                el.textContent = el_text.getElementsByTagName('input')[0].value;
+                el.id = el_id.getElementsByTagName('input')[0].value;
+                el.classList = el_class.getElementsByTagName('input')[0].value;
+            }
+            if (tag_name == 'h1')
+            {
+                el.innerText = el_text.getElementsByTagName('input')[0].value;
+                el.id = el_id.getElementsByTagName('input')[0].value;
+                el.style.cssText = el_style.getElementsByTagName('input')[0].value;
+            }
+            let div = document.createElement('div');
+            div.appendChild(el);
+            let final = document.getElementById('final');
+            final.appendChild(div);
+        }
+        function showSettings (tag_name)
+        {
+            let dom_elements = document.getElementsByClassName('setting');
+            let arr_elements = Array.from(dom_elements);
+            arr_elements.map(function (item) {
+                item.getElementsByTagName('input')[0].value = '';
+                if (!item.classList.contains('hidden'))
+                {
+                    return item.classList.add('hidden');
+                }
+                return item;
+            });
+            console.log(arr_elements);
+            if (tag_name == 'a')
+            {
+                el_text.classList.remove('hidden');
+                el_link.classList.remove('hidden');
+                el_class.classList.remove('hidden');
+            }
+            if (tag_name == 'strong')
+            {
+                el_text.classList.remove('hidden');
+                el_id.classList.remove('hidden');
+                el_class.classList.remove('hidden');
+            }
+            if (tag_name == 'h1')
+            {
+                el_text.classList.remove('hidden');
+                el_id.classList.remove('hidden');
+                el_style.classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
